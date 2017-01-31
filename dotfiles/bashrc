@@ -1,0 +1,59 @@
+# User Path
+export PATH=~/.local/bin:$PATH
+
+# Homebrew
+export PATH=/usr/local/bin:$PATH
+
+# Virtualenv/VirtualenvWrapper
+#source /usr/local/bin/virtualenvwrapper.sh
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+# Tell ls to be colourful
+# export PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
+export CLICOLOR=1
+
+#export LSCOLORS=ExFxCxDxBxegedabagacad
+#export LSCOLORS=ExFxBxDxCxegedabagacad
+
+#export LSCOLORS=gxfxbEaEBxxEhEhBaDaCaD
+alias ls='ls -GhC'
+alias rm='rm -i'
+#export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
+# Tell grep to highlight matches
+export GREP_OPTIONS='--color=auto'
+
+######### This is for tmux-resurrect
+HISTCONTROL=ignoreboth
+
+###########################################################################t
+#
+# => Alias
+##############################################################################
+#Set matlab as nodesktop version
+alias matlab='/Applications/MATLAB_R2015b.app/bin/matlab -nodesktop'
+
+# Use Personal Vim
+alias vim='/usr/local/bin/vim'
+# Add Runtime path for MacVim
+export VIMRUNTIME='/Applications/MacVim.app/Contents/Resources/vim/runtime'
+
+# gdrive
+alias gdrive='/usr/local/bin/gdrive'
+
+############### Functions ################3
+function frameworkpython {
+  if [[ ! -z "$VIRTUAL_ENV" ]]; then
+    PYTHONHOME=$VIRTUAL_ENV /usr/local/bin/python "$@"
+  else
+    /usr/local/bin/python "$@"
+  fi
+}
+
+#export PATH="/usr/local/sbin:$PATH"
+#export PYENV_ROOT="$HOME/.pyenv"
+#export PATH="$PYENV_ROOT/bin:$PATH"
+#export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+#eval "$(pyenv init -)"
+export PATH=~/miniconda3/bin:"$PATH"

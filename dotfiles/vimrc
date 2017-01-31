@@ -1,0 +1,371 @@
+" Yunting:
+"   Add Pathogen
+
+execute pathogen#infect()
+
+" :W sudo saves the file 
+" (useful for handling the permission-denied error)
+command W w !sudo tee % > /dev/null
+
+" Set Up runtime path
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM user interface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Ignore case when searching
+set ignorecase
+
+" When searching try to be smart about cases 
+set smartcase
+
+" Highlight search results
+set hlsearch
+
+" Makes search act like search in modern browsers
+set incsearch 
+
+" Don't redraw while executing macros (good performance config)
+set lazyredraw 
+
+" For regular expressions turn magic on
+set magic
+
+" Show matching brackets when text indicator is over them
+set showmatch 
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set tm=500
+
+" Add a bit extra margin to the left
+set foldcolumn=1
+
+" Zsh Sytle Search Table
+set wildmode=longest,list
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set t_Co=256
+if has('gui_running')
+    set background=dark
+    colorscheme solarized
+else
+    set background=dark
+    colorscheme solarized
+endif
+
+call togglebg#map("<F5>")
+
+set guifont=Monaco:h16
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files, backups and undo
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Turn backup off, since most stuff is in SVN, git et.c anyway...
+"set nobackup
+"set nowb
+"set noswapfile
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text, tab and indent related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use spaces instead of tabs
+set expandtab
+
+" Be smart when using tabs ;)
+set smarttab
+
+" 1 tab == 4 spaces
+set shiftwidth=4
+set tabstop=4
+
+
+set ai "Auto indent
+set si "Smart indent
+
+""""""""""""""""""""""""""""""
+" => Visual mode related
+""""""""""""""""""""""""""""""
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moving around, tabs, windows and buffers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Return to last edit position when opening files (You want this!)
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
+" Remember info about open buffers on close
+set viminfo^=%
+
+
+""""""""""""""""""""""""""""""
+" => Status line
+""""""""""""""""""""""""""""""
+" Always show the status line
+set laststatus=2
+
+" Format the status line
+set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Editing mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Leader Key
+let mapleader = " "
+" Normal Mode Remap
+nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
+
+" Command Line Mode Remap
+" Make '%%' Equaivalent to current file directory
+cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
+
+"" visual star, match current visual selection
+xnoremap * :<C-u>call <SID>VSetSearch('/')<CR>/<C-R>=@/<CR><CR>
+xnoremap # :<C-u>call <SID>VSetSearch('/')<CR>/<C-R>=@/<CR><CR>
+
+function! s:VSetSearch(cmdtype)
+  let temp = @s
+  norm! gv"sy
+  let @/ = '\V' . substitute(escape(@s, a:cmdtype.'\'), '\n', '\\n', 'g')
+  let @s = temp
+endfunction
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Spell checking
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Misc
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set a highlight on line 80
+if exists('+colorcolumn')
+    set colorcolumn=80
+else
+    au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
+endif
+
+" Dictionary Location
+set dictionary-=/usr/share/dict/words dictionary+=/usr/share/dict/words
+
+" Omni-completion
+set omnifunc=syntaxcomplete#Complete
+
+" UTF8 Support
+set encoding=utf-8
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => File Type Specific
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""Python """"""""""""""""""""""
+au BufNewFile, BufRead *.py
+  \ set tabstop=4
+  \ set softtabstop=4
+  \ set shiftwidth=4
+  \ set textwidth=79
+  \ set expandtab
+  \ set autoindent
+  \ set fileformat=unix
+
+" python with virtualenv support
+py << EOF
+import os
+import sys
+if 'VIRTUAL_ENV' in os.environ:
+  project_base_dir = os.environ['VIRTUAL_ENV']
+  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+  execfile(activate_this, dict(__file__=activate_this))
+EOF
+
+"""""""""""""Makefile""""""""""""""
+autocmd FileType make setlocal noexpandtab
+
+"""""""""""""JavaScript, HTML, CSS""""""""""""""
+au BufNewFile, BufRead *.js, *.html, *.css
+  \ set tabstop=2
+  \ set softtabstop=2
+  \ set shiftwidth=2
+
+
+""""""""""""""""""""""""""""""""""""""
+" ==>> Third Party
+""""""""""""""""""""""""""""""""""""""
+""=> Syntastic
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+"" Open Manually , Close Automatically
+let g:syntastic_auto_loc_list = 2
+let g:syntastic_loc_list_height = 5
+
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+let g:syntastic_aggregate_errors = 1
+
+
+""=> Airline
+"let g:airline#extensions#default#section_truncate_width = {}
+" Before figuring out how to Display all the errors messages, disable for now
+let g:airline#extensions#whitespace#enabled = 1
+"
+"""=> EasyTags
+"let g:easytags_async = 1
+"" let g:easytags_by_filetype = '~/.vimtags'
+"" Enable C++/Java Member Highlighitn
+"let g:easytags_include_members = 1
+"highlight link cMember Special
+"let g:easytags_python_enabled = 1
+"" Disable the tag from easy tags, but use Gutentags for tag managements
+"let g:easytags_auto_update = 0
+"let g:easytags_auto_highlight = 0
+"" Enable for small directory trees, Recursively search for the subdirectory
+"let g:easytags_autorecurse = 0
+"" Enable this for recognizing tags file in the project
+"let g:easytags_dynamic_files = 1
+"let g:easytags_syntax_keyword = 'always'
+"
+
+"" Tmuxline
+let g:tmuxline_separators = {
+    \ 'left' : '',
+    \ 'left_alt': '>',
+    \ 'right' : '',
+    \ 'right_alt' : '<',
+    \ 'space' : ' '}
+
+
+""""""""""""""""" Pencil """"""""""""""""""""""
+"augroup pencil
+"  autocmd!
+"  autocmd FileType markdown,mkd call pencil#init()
+"  autocmd FileType text         call pencil#init()
+"augroup END
+"
+"" Map Key 'K' for automatic formatting suspension
+"let g:pencil#map#suspend_af = 'K'   "Default is no Mapping
+"let g:airline_section_x = '%{PencilMode()}'
+"
+"" If a line excess this value, assume softwrap
+"let g:pencil#softDetectThreshold = 130
+"let g:pencil#conceallevel = 0
+"
+"""let g:pencil#autoformat_config = {
+"""      \   'markdown': {
+"""      \     'black': [
+"""      \       'htmlH[0-9]',
+"""      \       'markdown(Code|H[0-9]|Url|IdDeclaration|Link|Rule|Highlight[A-Za-z0-9]+)',
+"""      \       'markdown(FencedCodeBlock|InlineCode)',
+"""      \       'mkd(Code|Rule|Delimiter|Link|ListItem|IndentCode)',
+"""      \       'mmdTable[A-Za-z0-9]*',
+"""      \     ],
+"""      \     'white': [
+"""      \      'markdown(Code|Link)',
+"""      \     ],
+"""      \   },
+"""      [snip]
+"""      \ }
+"
+""" For Prosing
+"function! Prose()
+"  call pencil#init()
+"  call lexical#init()
+"  call litecorrect#init()
+"  call textobj#quote#init()
+"  call textobj#sentence#init()
+"
+"
+"
+"  " force top correction on most recent misspelling
+"  nnoremap <buffer> <c-s> [s1z=<c-o>
+"  inoremap <buffer> <c-s> <c-g>u<Esc>[s1z=`]A<c-g>u
+"
+"  " replace common punctuation
+"  iabbrev <buffer> -- –
+"  iabbrev <buffer> --- —
+"  iabbrev <buffer> << «
+"  iabbrev <buffer> >> »
+"
+"  " open most folds
+"  setlocal foldlevel=6
+"  set colorcolumn=0
+"  set tw=78
+"endfunction
+
+" automatically initialize buffer by file type
+"autocmd FileType markdown,mkd,text call Prose()
+
+"Call Goyo and Lime Together"
+autocmd! User GoyoEnter Limelight
+autocmd! User GoyoLeave Limelight!
+
+" invoke manually by command for other file types
+"command! -nargs=0 Prose call Prose()
+
+""""""""""""""""Lime Light """""""""""""""""""
+let g:limelight_conceal_ctermfg = 'DarkGrey'
+let g:limelight_conceal_guifg = 'DarkGrey'
+let g:limelight_default_coefficient = 0.2
+
+""""""""""" Vim-Latex Suit """""""""""""""""""""
+" IMPORTANT: win32 users will need to have 'shellslash' set so that latex
+" can be called correctly.
+"set shellslash
+
+" IMPORTANT: grep will sometimes skip displaying the file name if you
+" search in a singe file. This will confuse Latex-Suite. Set your grep
+" program to always generate a file-name.
+set grepprg=grep\ -nH\ $*
+
+" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults
+" to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
+let g:tex_flavor='latex'
+
+" this is mostly a matter of taste. but LaTeX looks good with just a bit
+" " of indentation.
+set sw=2
+"
+" " TIP: if you write your \label's as \label{fig:something}, then if you
+" " type in \ref{fig: and press <C-n> you will automatically cycle through
+" " all the figure labels. Very useful!
+set iskeyword+=:
+
+""""""""""""""""""""""""""""""""""""""""" Vim-Markdown """""""""""""""""
+let g:markdown_syntax_conceal = 1
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+hi markdownItalic cterm=italic gui=italic
+
+
+""""""""""""""""" NerdTree """""""""""""""""""'
+map <Leader>n <plug>NERDTreeTabsToggle<CR>
+
+""""""""""""""""" SimpylFold """""""""""""""""""
+let g:SimpylFold_docstring_preview=1
+
+"""""""""""""""" CTRLP """"""""""""""""
+let g:ctrlp_working_path_mode = 'ra'
+
+"""""""""""You Complete Me"""""""""""
+let g:ycm_autoclose_preview_window_after_completion=1
+map <leader>h :YcmCompleter GetDoc<CR>
+map <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+" Using PyMode Autocompletion
+let g:ycm_filetype_specific_completion_to_disable = {
+      \ 'gitcommit': 1
+      \ }
+
+let g:ycm_python_binary_path = 'python'
